@@ -9,6 +9,9 @@
  * @param {number} startAngle 起始角度 0到360
  * @param {string} capType 圆弧拼接类型 "round"
  * @param {string} fontStyle 文本描述样式
+ * @param {object} title 标题样式及位置
+ * @param {object} tooltip 提示框的样式
+ * @param {object} label 标签的样式及显示
  * @param {array} data 圆弧数据
  * @param {string} data[i].name 数据名称
  * @param {number} data[i].value 数据值
@@ -19,7 +22,61 @@
  */
 
 function circularRing(canvasId, option) {
-    this.option = option
+    this.option = {
+        title: {
+            show:true,
+            text: {
+                value: '',
+                color: '#999',
+                fontSize: '30px',
+                fontFamily: 'Arial'
+            },
+            secondText: {
+                value: '',
+                color: '#666',
+                fontSize: '30px',
+                fontFamily: 'Arial'
+            },
+            x: "50%",
+            y: "50%",
+        },
+        tooltip: {
+            show: true,
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            color: 'white'
+        },
+        x: "50%",
+        y: "50%",
+        radius: "30%",
+        lineWidth: "5%",
+        startAngle: 0,
+        data: [],
+        label: {
+            show: true,
+            firstTextStyle: {
+                fontSize: '30px',
+                fontFamily: 'Arial',
+                color: "#999"
+            },
+            secondTextStyle: {
+                fontSize: '30px',
+                fontFamily: 'Arial',
+                color: "#666"
+            }
+        },
+        capType: "round",
+        selectedStyle: {
+            color: "white",
+            borderWidth: 10
+        },
+        color:["#FF7F00","#FFFF00 ","#00FF00 ","#00FFFF ","#0000FF","#8B00FF","#FF0000 "],
+        labelCoverTitle: true
+    }
+    this.option = extend(true,this.option,option)
+    if(this.option.color.length<this.option.data.length){
+        throw 'option.color 颜色少于 option.data'
+    }
     this.canvas = document.getElementById(canvasId);
     this.width = this.canvas.width
     this.height = this.canvas.height
@@ -44,6 +101,9 @@ circularRing.prototype.drawArc = function (startAngle, endAngle, color, lineWidt
     this.ctx.closePath();
 };
 circularRing.prototype.drawTitle = function (titleFlag) {
+    if (!this.option.title.show) {
+        return false;
+    }
     if (this.option.title && !titleFlag) {
         // title 主标题
         if (!this.option.title.text.value) {
@@ -55,15 +115,15 @@ circularRing.prototype.drawTitle = function (titleFlag) {
         this.ctx.font = this.option.title.text.fontSize + ' ' + this.option.title.text.fontFamily;
         // 副标题
         if (!this.option.title.secondText.value) {
-            this.ctx.fillText(this.option.title.text.value, formatPercent(this.option.title.x) * this.width, formatPercent(this.option.title.y) * this.height);
+            this.ctx.fillText(this.option.title.text.value, formatPercent(this.option.title.x,'option.title.x') * this.width, formatPercent(this.option.title.y,'option.title.y') * this.height);
             return false;
         }
-        this.ctx.fillText(this.option.title.text.value, formatPercent(this.option.title.x) * this.width, formatPercent(this.option.title.y) * this.height - 2 * formatPx(this.option.title.text.fontSize, 'option.title.text.fontSize') / 3);
+        this.ctx.fillText(this.option.title.text.value, formatPercent(this.option.title.x,'option.title.x') * this.width, formatPercent(this.option.title.y,'option.title.y') * this.height - 2 * formatPx(this.option.title.text.fontSize, 'option.title.text.fontSize') / 3);
         this.ctx.beginPath();
         this.ctx.textAlign = "center";
         this.ctx.fillStyle = this.option.title.secondText.color;
         this.ctx.font = this.option.title.secondText.fontSize + ' ' + this.option.title.secondText.fontFamily;
-        this.ctx.fillText(this.option.title.secondText.value, formatPercent(this.option.title.x) * this.width, formatPercent(this.option.title.y) * this.height + 2 * formatPx(this.option.title.secondText.fontSize, 'option.title.secondText.fontSize') / 3);
+        this.ctx.fillText(this.option.title.secondText.value, formatPercent(this.option.title.x,'option.title.x') * this.width, formatPercent(this.option.title.y,'option.title.y') * this.height + 2 * formatPx(this.option.title.secondText.fontSize, 'option.title.secondText.fontSize') / 3);
     }
 }
 circularRing.prototype.drawTip = function (param) {
@@ -207,4 +267,137 @@ function formatPx(param, name) {
 // 角度转弧度
 function angelToRadian(param) {
     return param * Math.PI / 180
+}
+
+function extend() {
+	var src, copyIsArray, copy, name, options, clone,
+		target = arguments[ 0 ] || {},
+		i = 1,
+		length = arguments.length,
+		deep = false;
+
+	// Handle a deep copy situation
+	if ( typeof target === "boolean" ) {
+		deep = target;
+
+		// skip the boolean and the target
+		target = arguments[ i ] || {};
+		i++;
+	}
+
+	// Handle case when target is a string or something (possible in deep copy)
+	if ( typeof target !== "object" && !isFunction( target ) ) {
+		target = {};
+	}
+	
+	if ( i === length ) {
+		target = this;
+		i--;
+	}
+
+	for ( ; i < length; i++ ) {
+
+		// Only deal with non-null/undefined values
+		if ( ( options = arguments[ i ] ) != null ) {
+
+			// Extend the base object
+			for ( name in options ) {
+				src = target[ name ];
+				copy = options[ name ];
+
+				// Prevent never-ending loop
+				if ( target === copy ) {
+					continue;
+				}
+
+				// Recurse if we're merging plain objects or arrays
+				if ( deep && copy && ( isPlainObject( copy ) ||
+					( copyIsArray = isArray( copy ) ) ) ) {
+
+					if ( copyIsArray ) {
+						copyIsArray = false;
+						clone = src && isArray( src ) ? src : [];
+
+					} else {
+						clone = src && isPlainObject( src ) ? src : {};
+					}
+
+					// Never move original objects, clone them
+					target[ name ] = extend( deep, clone, copy );
+
+				// Don't bring in undefined values
+				} else if ( copy !== undefined ) {
+					target[ name ] = copy;
+				}
+			}
+		}
+	}
+
+	// Return the modified object
+	return target;
+};
+
+function isFunction(param){
+    return typeof param == 'function'
+}
+
+
+function isPlainObject( obj ) {
+    var key;
+
+    // Must be an Object.
+    // Because of IE, we also have to check the presence of the constructor property.
+    // Make sure that DOM nodes and window objects don't pass through, as well
+    if ( !obj || type( obj ) !== "object" || obj.nodeType || isWindow( obj ) ) {
+        return false;
+    }
+
+    try {
+
+        // Not own constructor property must be Object
+        if ( obj.constructor &&
+            !hasOwn.call( obj, "constructor" ) &&
+            !hasOwn.call( obj.constructor.prototype, "isPrototypeOf" ) ) {
+            return false;
+        }
+    } catch ( e ) {
+
+        // IE8,9 Will throw exceptions on certain host objects #9897
+        return false;
+    }
+
+    // Support: IE<9
+    // Handle iteration over inherited properties before own properties.
+    if ( !support.ownFirst ) {
+        for ( key in obj ) {
+            return hasOwn.call( obj, key );
+        }
+    }
+
+    // Own properties are enumerated firstly, so to speed up,
+    // if last one is own, then all properties are own.
+    for ( key in obj ) {}
+
+    return key === undefined || hasOwn.call( obj, key );
+}
+var class2type ={}
+var toString = class2type.toString;
+var hasOwn = class2type.hasOwnProperty;
+var support = {};
+function type ( obj ) {
+    if ( obj == null ) {
+        return obj + "";
+    }
+    return typeof obj === "object" || typeof obj === "function" ?
+        class2type[ toString.call( obj ) ] || "object" :
+        typeof obj;
+}
+
+function isWindow ( obj ) {
+    /* jshint eqeqeq: false */
+    return obj != null && obj == obj.window;
+}
+
+function isArray ( obj ) {
+    return type( obj ) === "array";
 }

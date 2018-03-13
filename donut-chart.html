@@ -15,43 +15,41 @@
             margin: 0;
             box-sizing: border-box;
         }
-
         canvas {
-            
             width: 100%;
             background: #eee;
         }
     </style>
 </head>
-
 <body>
 
     <canvas id="myCanvas" width="750" height="600"></canvas>
 
-    <script src="./pie.js"></script>
+    <script src="./donut-chart.js"></script>
     <script>
         var option = {
-            title:{
-                text:{
-                    value:'总资产(元)',
-                    color:'#999',
-                    fontSize:'30px',
-                    fontFamily:'Arial'
+            title: {
+                show:true,
+                text: {
+                    value: '总资产(元)',
+                    color: '#999',
+                    
+                    fontFamily: 'Arial'
                 },
-                secondText:{
-                    value:'360',
-                    color:'#666',
+                secondText: {
+                    value: '360',
+                    color: '#666',
                     fontSize: '30px',
                     fontFamily: 'Arial'
                 },
-                x:"50%",
-                y:"50%",
+                x: '50%',
+                y: "50%",
             },
-            tooltip:{
-                show:true,
+            tooltip: {
+                show: true,
                 fontSize: '24px',
                 fontFamily: 'Arial',
-                color:'white'
+                color: 'white'
             },
             x: "50%",
             y: "50%",
@@ -61,39 +59,39 @@
             data: [{
                 name: "账户余额(元)",
                 value: 120,
-            },{
+            }, {
                 name: "散标待回(元)",
                 value: 110,
-            },{
+            }, {
                 name: "在途资金(元)",
                 value: 130,
             }],
-            label:{
-                show:true,
+            label: {
+                show: true,
                 firstTextStyle: {
-                    fontSize:'30px',
-                    fontFamily:'Arial',
-                    color:"#999"
-                }              ,
-                secondTextStyle:{
                     fontSize: '30px',
                     fontFamily: 'Arial',
-                    color:"#666"
-                }  
+                    color: "#999"
+                },
+                secondTextStyle: {
+                    fontSize: '30px',
+                    fontFamily: 'Arial',
+                    color: "#666"
+                }
             },
             capType: "round",
             selectedStyle: {
                 color: "white",
                 borderWidth: 10
             },
-            color: ["#ff8832", "#eb5e5d", "#a1b9ff"],
-            labelCoverTitle:true
+            color: ["#fe7c00", "#e83227", "#32a676"],
+            labelCoverTitle: true
         }
-        var cir = new circularRing('myCanvas',option)
-        
+        var cir = new circularRing('myCanvas', option)
+
         cir.init(function (result) {
-                
-            })
+            console.log(result)
+        })
         
     </script>
 </body>
