@@ -1,6 +1,6 @@
 ## 声明
 
-> 市场上虽然有各种基于canvas的图标工具，比如echarts.js ,chart.js。他们功能都很强大，性能也比较优秀。但是饼形图或环形图中并没有以圆角为交界的图标。
+> 市场上虽然有各种基于canvas的图表工具，比如echarts.js ,chart.js。他们功能都很强大，性能也比较优秀。但是饼形图或环形图中并没有以圆角为交界的图表。
 
 ![demo](./images/image.png)
 
@@ -21,11 +21,11 @@
 >> 最后初始化并且可以指定回调函数
 ```javascript
     cir.init(function (result) {
-        console.log(result)
+        // result 选中的选区的相关信息
     })
 ```
 ## 参数
->> option 示例
+>> option 示例 (默认值)
 ```javascript
     var option = {
         title: {
