@@ -36,8 +36,8 @@
                 fontSize: '30px',
                 fontFamily: 'Arial'
             },
-            secondText: {   // 副标题
-                value: '', //必填
+            secondText: {   // 副标题(可选)
+                value: '', //(有副标题)必填
                 color: '#666',
                 fontSize: '30px',
                 fontFamily: 'Arial'
