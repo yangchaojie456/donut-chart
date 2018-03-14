@@ -16,7 +16,6 @@
             box-sizing: border-box;
         }
         canvas {
-            width: 100%;
             background: #eee;
         }
     </style>
@@ -25,7 +24,7 @@
 
     <canvas id="myCanvas" width="750" height="600"></canvas>
 
-    <script src="./donut-chart.js"></script>
+    <script src="../dist/donut-chart.min.js"></script>
     <script>
         var option = {
             title: {
@@ -87,7 +86,7 @@
             color: ["#fe7c00", "#e83227", "#32a676"],
             labelCoverTitle: true
         }
-        var cir = new circularRing('myCanvas', option)
+        var cir = new DonutChart('myCanvas', option)
 
         cir.init(function (result) {
             console.log(result)

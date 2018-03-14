@@ -1,0 +1,36 @@
+{
+  "name": "donut-chart",
+  "version": "1.0.0",
+  "description": "create donut chart with linecap",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yangchaojie456/donut-chart.git"
+  },
+  "keywords": [
+    "donut",
+    "chart"
+  ],
+  "author": {
+    "name": "L",
+    "email": "yangchaojie456@126.com",
+    "url": "http://www.yangchaojie.top/plugin/donut-chart"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yangchaojie456/donut-chart/issues"
+  },
+  "homepage": "https://github.com/yangchaojie456/donut-chart#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^3.11.0"
+  }
+}
