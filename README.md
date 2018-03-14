@@ -7,6 +7,8 @@
 > **本插件使用canvas可以帮助你快速创建一个以圆角交界的环形图**
 ## 兼容性
 > 适用于所有主流浏览器及移动端的浏览器。**IE8及以下不支持**
+## 安装
+>> npm install donut-chart
 ## demo
 >> http://www.yangchaojie.top/plugin/donut-chart
 ## 用法
