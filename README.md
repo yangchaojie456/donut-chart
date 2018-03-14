@@ -2,7 +2,7 @@
 
 > 市场上虽然有各种基于canvas的图表工具，比如echarts.js ,chart.js。他们功能都很强大，性能也比较优秀。但是饼形图或环形图中并没有以圆角为交界的图表。
 
-![demo](./images/image.png)
+![demo](./example/images/image.png)
 
 > **本插件使用canvas可以帮助你快速创建一个以圆角交界的环形图**
 ## 兼容性
@@ -16,7 +16,7 @@
 ```
 >> 然后创建环形图对象
 ```javascript
-    var cir = new circularRing('myCanvas', option)
+    var cir = new DonutChart('myCanvas', option)
 ```
 >> 最后初始化并且可以指定回调函数
 ```javascript
