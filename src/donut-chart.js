@@ -20,6 +20,7 @@ const utils = require('./utils')
  * @param {string} selectedStyle.color 选中的圆弧边界颜色
  * @param {number} selectedStyle.borderWidth 选中的圆弧边界宽度
  * @param {array} color 圆弧的分配颜色
+ * @param {string} backgroundArc 数值为空时的圆圈颜色
  */
 module.exports = DonutChart
 function DonutChart(canvasId, option) {
@@ -72,7 +73,8 @@ function DonutChart(canvasId, option) {
             borderWidth: 10
         },
         color:["#FF7F00","#FFFF00 ","#00FF00 ","#00FFFF ","#0000FF","#8B00FF","#FF0000 "],
-        labelCoverTitle: true
+        labelCoverTitle: true,
+        backgroundArc:'#999'
     }
     this.option = utils.extend(true,this.option,option)
     if(this.option.color.length<this.option.data.length){
@@ -183,6 +185,10 @@ DonutChart.prototype.init = function (callback, titleFlag) {
     this.data.forEach(function (item, index) {
         total += item.value
     })
+    if(total==0){
+        this.drawArc(0, 360, this.option.backgroundArc)
+        return false;
+    }
     var lastAngel = 0
     this.data.forEach(function (item, index) {
         var arr = (item.value / total).toFixed(4).toString().slice(2).split('')

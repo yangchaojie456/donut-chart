@@ -111,6 +111,7 @@ var utils = __webpack_require__(2);
  * @param {string} selectedStyle.color 选中的圆弧边界颜色
  * @param {number} selectedStyle.borderWidth 选中的圆弧边界宽度
  * @param {array} color 圆弧的分配颜色
+ * @param {string} backgroundArc 数值为空时的圆圈颜色
  */
 module.exports = DonutChart;
 function DonutChart(canvasId, option) {
@@ -163,7 +164,8 @@ function DonutChart(canvasId, option) {
             borderWidth: 10
         },
         color: ["#FF7F00", "#FFFF00 ", "#00FF00 ", "#00FFFF ", "#0000FF", "#8B00FF", "#FF0000 "],
-        labelCoverTitle: true
+        labelCoverTitle: true,
+        backgroundArc: '#999'
     };
     this.option = utils.extend(true, this.option, option);
     if (this.option.color.length < this.option.data.length) {
@@ -274,6 +276,10 @@ DonutChart.prototype.init = function (callback, titleFlag) {
     this.data.forEach(function (item, index) {
         total += item.value;
     });
+    if (total == 0) {
+        this.drawArc(0, 360, this.option.backgroundArc);
+        return false;
+    }
     var lastAngel = 0;
     this.data.forEach(function (item, index) {
         var arr = (item.value / total).toFixed(4).toString().slice(2).split('');
@@ -304,12 +310,11 @@ DonutChart.prototype.init = function (callback, titleFlag) {
     this.canvas.onmousemove = function (e) {
 
         var rate = _this.canvas[this.width > this.height ? "offsetHeight" : "offsetWidth"] / this[this.width > this.height ? "height" : "width"];
-        console.log(e.offsetX, this.offsetWidth);
+
         var x = e.offsetX - this.offsetWidth / 2;
         var y = e.offsetY - this.offsetHeight / 2;
         var x2 = x * x;
         var y2 = y * y;
-
         // 选中圆环
         if (Math.sqrt(x2 + y2) > (_this.radius - _this.lineWidth) * rate && Math.sqrt(x2 + y2) < (_this.radius + _this.lineWidth) * rate) {
             var angle = Math.atan2(x, -y) / (Math.PI / 180) > 0 ? Math.atan2(x, -y) / (Math.PI / 180) : 360 + Math.atan2(x, -y) / (Math.PI / 180);
@@ -325,10 +330,11 @@ DonutChart.prototype.init = function (callback, titleFlag) {
                     _this.drawLabel(_this.arcArray[i]);
                     // show tip
                     _this.drawTip({
-                        x: x,
-                        y: y,
+                        x: x / rate,
+                        y: y / rate,
                         data: _this.arcArray[i]
                     });
+
                     callback(_this.arcArray[i]);
                     break;
                 }
