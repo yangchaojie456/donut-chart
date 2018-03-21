@@ -89,6 +89,8 @@ module.exports = __webpack_require__(1);
 "use strict";
 
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var utils = __webpack_require__(2);
 /**
  * @description 创建环形图
@@ -135,7 +137,11 @@ function DonutChart(canvasId, option) {
         },
         tooltip: {
             show: true,
-            fontSize: '24px',
+            fontStyle: "normal",
+            fontVariant: "normal",
+            fontWeight: 'normal',
+            fontSize: "24px",
+            lineHeight: "30px",
             fontFamily: 'Arial',
             color: 'white'
         },
@@ -144,6 +150,7 @@ function DonutChart(canvasId, option) {
         radius: "30%",
         lineWidth: "5%",
         startAngle: 0,
+        endAngle: 360,
         data: [],
         label: {
             show: true,
@@ -221,36 +228,127 @@ DonutChart.prototype.drawTitle = function (titleFlag) {
     }
 };
 DonutChart.prototype.drawTip = function (param) {
+    var _this2 = this;
+
     if (!this.option.tooltip.show) {
         return false;
     }
     this.ctx.save();
     this.ctx.rotate(utils.angelToRadian(90 + this.option.startAngle));
     this.ctx.beginPath();
-    this.ctx.font = this.option.tooltip.fontSize + ' ' + this.option.tooltip.fontFamily;
-    this.ctx.rect(param.x - 5, param.y - 5, this.ctx.measureText(param.data.name).width + 10, 2.5 * utils.formatPx(this.option.tooltip.fontSize) + 10);
-    this.ctx.fillStyle = '#00000088';
-    this.ctx.fill();
+    var default_font = this.option.tooltip.fontStyle + " " + this.option.tooltip.fontVariant + " " + this.option.tooltip.fontWeight + " " + this.option.tooltip.fontSize + (this.option.tooltip.lineHeight ? "/" + this.option.tooltip.lineHeight : '') + " " + this.option.tooltip.fontFamily;
+    this.ctx.font = default_font;
     this.ctx.fillStyle = this.option.tooltip.color;
     this.ctx.textAlign = "start";
-    this.ctx.fillText(param.data.name, param.x, param.y + utils.formatPx(this.option.tooltip.fontSize));
-    this.ctx.fillText(param.data.value + '(' + param.data.percent + ')', param.x, param.y + 2.2 * utils.formatPx(this.option.tooltip.fontSize));
+    this.ctx.textBaseline = "bottom";
+    // tip_back 需要知道 左上角（x,y）width （maxWidth 最长的一行宽度） 和 height(每一行的行高总和)
+    // 判定是含富文本的还是普通文本 (计算宽高的方式有所区别) 当有一个富文本的时候，则普通文本也会被包装成对象 所以可选像下面这样判断
+    var totalHeigth = 0;
+    var maxWidth = 0;
+    var rowWidth = 0;
+    var maxLineHeight = 0;
+    var rowLineHeight = [];
+    if (_typeof(param.content[0]) == "object") {
+        // 部分含有富文本的情况
+        // 分行 可以得到 本行我最大宽度 maxWidth 
+        param.content.forEach(function (rowObj, i) {
+            rowWidth = 0;
+            // 一行中的每小段 可以 得到 这一行的最大行高 maxLineHeight 和每小段 的 文本宽度
+            for (var key in rowObj) {
+                var text = rowObj[key];
+
+                if (!_this2.option.tooltip.rich[key]) {
+                    _this2.option.tooltip.rich[key] = {};
+                }
+                var fontStyle = _this2.option.tooltip.rich[key].fontStyle ? _this2.option.tooltip.rich[key].fontStyle : _this2.option.tooltip.fontStyle;
+                var fontVariant = _this2.option.tooltip.rich[key].fontVariant ? _this2.option.tooltip.rich[key].fontVariant : _this2.option.tooltip.fontVariant;
+                var fontWeight = _this2.option.tooltip.rich[key].fontWeight ? _this2.option.tooltip.rich[key].fontWeight : _this2.option.tooltip.fontWeight;
+                var fontSize = _this2.option.tooltip.rich[key].fontSize ? _this2.option.tooltip.rich[key].fontSize : _this2.option.tooltip.fontSize;
+                var lineHeight = _this2.option.tooltip.rich[key].lineHeight ? _this2.option.tooltip.rich[key].lineHeight : _this2.option.tooltip.lineHeight;
+                var fontFamily = _this2.option.tooltip.rich[key].fontFamily ? _this2.option.tooltip.rich[key].fontFamily : _this2.option.tooltip.fontFamily;
+                _this2.ctx.font = fontStyle + " " + fontVariant + " " + fontWeight + " " + fontSize + (lineHeight ? "/" + lineHeight : '') + " " + fontFamily;
+                _this2.ctx.fillStyle = _this2.option.tooltip.rich[key].color ? _this2.option.tooltip.rich[key].color : _this2.option.tooltip.color;
+                rowWidth += _this2.ctx.measureText(text).width;
+
+                if (utils.formatPx(lineHeight) > maxLineHeight) {
+                    maxLineHeight = utils.formatPx(lineHeight);
+                }
+            }
+            rowLineHeight[i] = maxLineHeight;
+            totalHeigth += maxLineHeight;
+            if (rowWidth > maxWidth) {
+                maxWidth = rowWidth;
+            }
+        });
+        // 画浮层
+        this.ctx.rect(param.x - 5, param.y, maxWidth + 10, totalHeigth);
+        this.ctx.fillStyle = '#00000088';
+        this.ctx.fill();
+        // 填写文字
+        totalHeigth = 0;
+        param.content.forEach(function (rowObj, i) {
+            rowWidth = 0;
+            rowLineHeight[i] = maxLineHeight;
+            totalHeigth += maxLineHeight;
+            // 一行中的每小段 可以 得到 这一行的最大行高 maxLineHeight 和每小段 的 文本宽度
+            for (var key in rowObj) {
+                var text = rowObj[key];
+
+                if (!_this2.option.tooltip.rich[key]) {
+                    _this2.option.tooltip.rich[key] = {};
+                }
+                var fontStyle = _this2.option.tooltip.rich[key].fontStyle ? _this2.option.tooltip.rich[key].fontStyle : _this2.option.tooltip.fontStyle;
+                var fontVariant = _this2.option.tooltip.rich[key].fontVariant ? _this2.option.tooltip.rich[key].fontVariant : _this2.option.tooltip.fontVariant;
+                var fontWeight = _this2.option.tooltip.rich[key].fontWeight ? _this2.option.tooltip.rich[key].fontWeight : _this2.option.tooltip.fontWeight;
+                var fontSize = _this2.option.tooltip.rich[key].fontSize ? _this2.option.tooltip.rich[key].fontSize : _this2.option.tooltip.fontSize;
+                var lineHeight = _this2.option.tooltip.rich[key].lineHeight ? _this2.option.tooltip.rich[key].lineHeight : _this2.option.tooltip.lineHeight;
+                var fontFamily = _this2.option.tooltip.rich[key].fontFamily ? _this2.option.tooltip.rich[key].fontFamily : _this2.option.tooltip.fontFamily;
+                _this2.ctx.font = fontStyle + " " + fontVariant + " " + fontWeight + " " + fontSize + (lineHeight ? "/" + lineHeight : '') + " " + fontFamily;
+                _this2.ctx.fillStyle = _this2.option.tooltip.rich[key].color ? _this2.option.tooltip.rich[key].color : _this2.option.tooltip.color;
+
+                _this2.ctx.fillText(text, param.x + rowWidth, param.y + totalHeigth);
+
+                rowWidth += _this2.ctx.measureText(text).width;
+            }
+        });
+    } else {
+        // 普通文字
+        var default_lineHeight = this.option.tooltip.lineHeight;
+        param.content.forEach(function (text, i) {
+            totalHeigth += utils.formatPx(default_lineHeight);
+            rowWidth = _this2.ctx.measureText(text).width;
+            if (rowWidth > maxWidth) {
+                maxWidth = rowWidth;
+            }
+        });
+        this.ctx.rect(param.x - 5, param.y, maxWidth + 10, totalHeigth);
+        this.ctx.fillStyle = '#00000088';
+        this.ctx.fill();
+        // 画完底部浮层 填上文字
+        this.ctx.fillStyle = this.option.tooltip.color;
+        totalHeigth = 0;
+        param.content.forEach(function (text, i) {
+            totalHeigth += utils.formatPx(default_lineHeight);
+            _this2.ctx.fillText(text, param.x, param.y + totalHeigth);
+        });
+    }
+
     this.ctx.restore();
 };
 DonutChart.prototype.drawLabel = function (param) {
     if (!this.option.label.show) {
         return false;
     }
+
     // 添加字体
     this.ctx.save();
     this.ctx.rotate(utils.angelToRadian(90 + this.option.startAngle));
     this.ctx.beginPath();
+    this.ctx.textAlign = "center";
     this.ctx.fillStyle = this.label.firstTextStyle.color;
     this.ctx.font = this.label.firstTextStyle.fontSize + ' ' + this.label.firstTextStyle.fontFamily;
-    this.ctx.textAlign = "center";
     this.ctx.fillText(param.name, 0, -2 * utils.formatPx(this.label.firstTextStyle.fontSize, 'label.firstTextStyle.fontSize') / 3);
 
-    this.ctx.beginPath();
     this.ctx.fillStyle = this.label.secondTextStyle.color;
     this.ctx.font = this.label.secondTextStyle.fontSize + ' ' + this.label.secondTextStyle.fontFamily;
     this.ctx.fillText(param.value, 0, 2 * utils.formatPx(this.label.secondTextStyle.fontSize, 'label.secondTextStyle.fontSize') / 3);
@@ -279,6 +377,10 @@ DonutChart.prototype.init = function (callback, titleFlag) {
     if (total == 0) {
         this.drawArc(0, 360, this.option.backgroundArc);
         return false;
+    }
+    if (this.option.type == "progress") {
+        total = 1;
+        this.drawArc(0, 360, this.option.backgroundArc);
     }
     var lastAngel = 0;
     this.data.forEach(function (item, index) {
@@ -329,14 +431,22 @@ DonutChart.prototype.init = function (callback, titleFlag) {
                     // show label
                     _this.drawLabel(_this.arcArray[i]);
                     // show tip
+                    var content;
+                    if (typeof _this.option.tooltip.formatter == "function") {
+                        content = utils.formatterToObject(_this.option.tooltip.formatter(_this.arcArray[i]));
+                    } else {
+                        content = [_this.arcArray[i].name, _this.arcArray[i].value];
+                    }
                     _this.drawTip({
                         x: x / rate,
                         y: y / rate,
-                        data: _this.arcArray[i]
+                        content: content
                     });
 
                     callback(_this.arcArray[i]);
                     break;
+                } else {
+                    _this.init(callback);
                 }
             }
         } else {
@@ -374,6 +484,50 @@ module.exports = {
         }
         throw name + " 参数格式错误";
     },
+
+    // 富文本格式"{a|水电费}"=》 object {a:水电费}
+    formatterToObject: function formatterToObject(param) {
+
+        if (param === undefined) {
+            return false;
+        }
+        if (typeof param != "string") {
+            throw "formatter 必须返回一个字符串";
+        }
+        try {
+            var rowTexts = param.split('\n');
+            var textObjs = [];
+            // 富文本格式
+
+            if (/\{(\w+)\|([\s\S]*?)\}/g.test(param)) {
+                rowTexts.forEach(function (element, index) {
+
+                    var str = '';
+                    var arr = element.replace(/\{(\w+)\|([\s\S]*?)\}/g, ',"$1":"$2",').split(',');
+
+                    arr.forEach(function (e, i) {
+                        if (e.indexOf(':') > -1) {
+                            str += e + ',';
+                        } else {
+                            str += '"default_' + i + '":"' + e + '",';
+                        }
+                    });
+
+                    // 得到要渲染的对象
+                    textObjs.push(JSON.parse("{" + str.slice(0, -1) + "}"));
+                });
+                // 普通格式
+            } else {
+                rowTexts.forEach(function (element) {
+                    textObjs.push(element);
+                });
+            }
+            return textObjs;
+        } catch (error) {
+            throw "formatter 的格式不正确";
+        }
+    },
+
 
     // 角度转弧度
     angelToRadian: function angelToRadian(param) {

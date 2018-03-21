@@ -17,7 +17,6 @@
         }
 
         canvas {
-
             background: #eee;
         }
     </style>
@@ -30,10 +29,10 @@
     <script src="../dist/donut-chart.min.js"></script>
     <script>
         var option = {
-            type: 'pie', // pie 环形图|| gauge 计量图
+            type: 'gauge', // pie 环形图|| gauge 计量图
             title: {
                 show: true,
-                text: '总资产(元)',
+                text: '完成度',
                 textStyle: {
                     fontStyle: "normal",
                     fontVariant: "normal",
@@ -43,7 +42,7 @@
                     fontFamily: 'Arial',
                     color: '#9f9f9f',
                 },
-                subtext: '360',
+                subtext: '50%',
                 subtextStyle: {
                     fontStyle: "normal",
                     fontVariant: "normal",
@@ -53,22 +52,22 @@
                     fontFamily: 'Arial',
                     color: '#e53344'
                 },
-                x: '10%',
-                y: "10%",
+                x: '50%',
+                y: "50%",
             },
             tooltip: {
                 show: true,
                 fontStyle: "normal",
                 fontVariant: "normal",
-                fontWeight: 'normal',
+                fontWeight: 'bold',
                 fontSize: "20px",
                 lineHeight: "30px",
                 fontFamily: 'Arial',
                 color: 'white',
-                backgroundColor: '#00000099',
                 formatter: function (param) {
-                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
-                        "元}"
+                    var str =   "{a|" + param.name + "}" + 
+                                "{c|" + param.percent + "}" + '\n' + 
+                                "{b|" + param.value + "}"
                     return str
                 },
                 rich: {
@@ -78,19 +77,8 @@
                         fontWeight: 'bold',
                         fontSize: "20px",
                         lineHeight: "30px",
-                        fontFamily: 'Arial',
-                        color: 'white',
-                    },
-                    c: {
-                        fontStyle: "normal",
-                        fontVariant: "normal",
-                        fontWeight: 'normal',
-                        fontSize: "20px",
-                        lineHeight: "30px",
-                        fontFamily: 'Arial',
-                        color: 'white',
-                    },
-                    b: {
+                        fontFamily: 'Arial'
+                    }, b: {
                         fontStyle: "normal",
                         fontVariant: "normal",
                         fontWeight: 'bold',
@@ -98,6 +86,13 @@
                         lineHeight: "35px",
                         fontFamily: 'Arial',
                         color: '#e53344',
+                    }, c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial'
                     }
                 }
             },
@@ -106,17 +101,11 @@
             radius: "30%",
             lineWidth: "5%",
             data: [{
-                name: "账户余额(元)",
-                value: 110,
-            }, {
-                name: "散标待回(元)",
-                value: 120,
-            }, {
-                name: "在途资金(元)",
-                value: 130,
+                name: "完成度",
+                value: 50,
             }],
             label: {
-                show: true,
+                show: false,
                 fontStyle: "normal",
                 fontVariant: "normal",
                 fontWeight: 'bold',
@@ -125,8 +114,9 @@
                 fontFamily: 'Arial',
                 color: '#9f9f9f',
                 formatter: function (param) {
-                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
-                        "}"
+                    var str =   "{a|" + param.name + "}" + 
+                                "{c|" + param.percent + "}" + '\n' + 
+                                "{b|" + param.value + "}"
                     return str
                 },
                 rich: {
@@ -137,25 +127,21 @@
                         fontSize: "20px",
                         lineHeight: "30px",
                         fontFamily: 'Arial',
-                        
-                    },
-                    b: {
+                    }, b: {
                         fontStyle: "normal",
                         fontVariant: "normal",
                         fontWeight: 'bold',
                         fontSize: "30px",
                         lineHeight: "35px",
                         fontFamily: 'Arial',
-                        color: '#e53344',
-                    },
-                    c: {
+                        color: '#e53344',                        
+                    }, c: {
                         fontStyle: "normal",
                         fontVariant: "normal",
                         fontWeight: 'bold',
                         fontSize: "20px",
                         lineHeight: "30px",
                         fontFamily: 'Arial',
-                        
                     }
                 }
             },
@@ -165,11 +151,11 @@
                 borderWidth: 10
             },
             color: ["#fe7c00", "#e83227", "#32a676"],
-            labelCoverTitle: true,
+            labelCoverTitle: false,
             backgroundArc: '#999'
         }
         var cir = new DonutChart('myCanvas', option)
-        
+
         cir.init(function (result) {
             // console.log(result)
         })

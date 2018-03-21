@@ -23,61 +23,73 @@ const utils = require('./utils')
  * @param {string} backgroundArc 数值为空时的圆圈颜色
  */
 module.exports = DonutChart
+
 function DonutChart(canvasId, option) {
     this.option = {
-        title: {
-            show:true,
-            text: {
-                value: '',
-                color: '#999',
-                fontSize: '30px',
-                fontFamily: 'Arial'
-            },
-            secondText: {
-                value: '',
-                color: '#666',
-                fontSize: '30px',
-                fontFamily: 'Arial'
-            },
-            x: "50%",
-            y: "50%",
-        },
-        tooltip: {
-            show: true,
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            color: 'white'
-        },
         x: "50%",
         y: "50%",
         radius: "30%",
         lineWidth: "5%",
         startAngle: 0,
+        title: {
+            show: true,
+            text: undefined,
+            textStyle: {
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'bold',
+                fontSize: "24px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: '#9f9f9f',
+            },
+            subtext: undefined,
+            subtextStyle: {
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'bold',
+                fontSize: "24px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: '#e53344'
+            },
+            x: '50%',
+            y: "50%",
+        },
+        tooltip: {
+            show: true,
+            fontStyle: "normal",
+            fontVariant: "normal",
+            fontWeight: 'normal',
+            fontSize: "24px",
+            lineHeight: "30px",
+            fontFamily: 'Arial',
+            color: 'white',
+            backgroundColor: '#00000099'
+        },
+        max:100,
         data: [],
         label: {
             show: true,
-            firstTextStyle: {
-                fontSize: '30px',
-                fontFamily: 'Arial',
-                color: "#999"
-            },
-            secondTextStyle: {
-                fontSize: '30px',
-                fontFamily: 'Arial',
-                color: "#666"
-            }
+            fontStyle: "normal",
+            fontVariant: "normal",
+            fontWeight: 'normal',
+            fontSize: "24px",
+            lineHeight: "30px",
+            fontFamily: 'Arial',
+            color: '#999'
         },
         capType: "round",
         selectedStyle: {
             color: "white",
             borderWidth: 10
         },
-        color:["#FF7F00","#FFFF00 ","#00FF00 ","#00FFFF ","#0000FF","#8B00FF","#FF0000 "],
+        color: ["#FF7F00", "#FFFF00 ", "#00FF00 ", "#00FFFF ", "#0000FF", "#8B00FF", "#FF0000 "],
         labelCoverTitle: true,
-        backgroundArc:'#999'
+        backgroundArc: '#999'
     }
-    this.option = utils.extend(true,this.option,option)
-    if(this.option.color.length<this.option.data.length){
+    this.option = utils.extend(true, this.option, option)
+    if (this.option.color.length < this.option.data.length) {
         throw 'option.color 颜色少于 option.data'
     }
     this.canvas = document.getElementById(canvasId);
@@ -91,6 +103,7 @@ function DonutChart(canvasId, option) {
     this.radius = utils.formatPercent(option.radius, 'option.radius') * (this.width > this.height ? this.height : this.width)
     this.data = option.data
     this.color = option.color
+    this.rate = this.canvas[this.width > this.height ? "offsetHeight" : "offsetWidth"] / this[this.width > this.height ? "height" : "width"]
 }
 DonutChart.prototype.drawArc = function (startAngle, endAngle, color, lineWidth) {
 
@@ -108,25 +121,32 @@ DonutChart.prototype.drawTitle = function (titleFlag) {
         return false;
     }
     if (this.option.title && !titleFlag) {
-        // title 主标题
-        if (!this.option.title.text.value) {
-            return false;
-        }
+        this.ctx.save();
         this.ctx.beginPath();
-        this.ctx.textAlign = "center";
-        this.ctx.fillStyle = this.option.title.text.color;
-        this.ctx.font = this.option.title.text.fontSize + ' ' + this.option.title.text.fontFamily;
+        this.ctx.textAlign = "start";
+        this.ctx.textBaseline = "bottom";
+        // 计算主标题和副标题行高总和
+        var _totalLineHeight = 0 
+        _totalLineHeight = utils.formatPx(this.option.title.textStyle.lineHeight,'option.title.textStyle.lineHeight') + utils.formatPx(this.option.title.subtextStyle.lineHeight,'option.title.subtextStyle.lineHeight')
+        this.ctx.translate(utils.formatPercent(this.option.title.x,'option.title.x') * this.width, utils.formatPercent(this.option.title.y,'option.title.y') * this.height-_totalLineHeight/2);
+
+
+        // 主标题
+        if (this.option.title.text !== undefined) {
+            this.ctx.font = this.option.title.textStyle.fontStyle + " " + this.option.title.textStyle.fontVariant + " " + this.option.title.textStyle.fontWeight + " " + this.option.title.textStyle.fontSize + (this.option.title.textStyle.lineHeight ? "/" + this.option.title.textStyle.lineHeight : '') + " " + this.option.title.textStyle.fontFamily
+            this.ctx.fillStyle = this.option.title.textStyle.color;
+            
+            this.ctx.fillText(this.option.title.text,-this.ctx.measureText(this.option.title.text).width/2,utils.formatPx(this.option.title.textStyle.lineHeight,'option.title.textStyle.lineHeight'));
+        }
+
         // 副标题
-        if (!this.option.title.secondText.value) {
-            this.ctx.fillText(this.option.title.text.value, utils.formatPercent(this.option.title.x,'option.title.x') * this.width, utils.formatPercent(this.option.title.y,'option.title.y') * this.height);
-            return false;
+        if (this.option.title.subtext !== undefined) {
+            this.ctx.font = this.option.title.subtextStyle.fontStyle + " " + this.option.title.subtextStyle.fontVariant + " " + this.option.title.subtextStyle.fontWeight + " " + this.option.title.subtextStyle.fontSize + (this.option.title.subtextStyle.lineHeight ? "/" + this.option.title.subtextStyle.lineHeight : '') + " " + this.option.title.subtextStyle.fontFamily
+            this.ctx.fillStyle = this.option.title.subtextStyle.color;
+            
+            this.ctx.fillText(this.option.title.subtext,-this.ctx.measureText(this.option.title.subtext).width/2,utils.formatPx(this.option.title.textStyle.lineHeight,'option.title.textStyle.lineHeight')+utils.formatPx(this.option.title.subtextStyle.lineHeight,'option.title.subtextStyle.lineHeight'));
         }
-        this.ctx.fillText(this.option.title.text.value, utils.formatPercent(this.option.title.x,'option.title.x') * this.width, utils.formatPercent(this.option.title.y,'option.title.y') * this.height - 2 * utils.formatPx(this.option.title.text.fontSize, 'option.title.text.fontSize') / 3);
-        this.ctx.beginPath();
-        this.ctx.textAlign = "center";
-        this.ctx.fillStyle = this.option.title.secondText.color;
-        this.ctx.font = this.option.title.secondText.fontSize + ' ' + this.option.title.secondText.fontFamily;
-        this.ctx.fillText(this.option.title.secondText.value, utils.formatPercent(this.option.title.x,'option.title.x') * this.width, utils.formatPercent(this.option.title.y,'option.title.y') * this.height + 2 * utils.formatPx(this.option.title.secondText.fontSize, 'option.title.secondText.fontSize') / 3);
+        this.ctx.restore();        
     }
 }
 DonutChart.prototype.drawTip = function (param) {
@@ -136,33 +156,224 @@ DonutChart.prototype.drawTip = function (param) {
     this.ctx.save()
     this.ctx.rotate(utils.angelToRadian(90 + this.option.startAngle))
     this.ctx.beginPath();
-    this.ctx.font = this.option.tooltip.fontSize + ' ' + this.option.tooltip.fontFamily
-    this.ctx.rect(param.x - 5, param.y - 5, this.ctx.measureText(param.data.name).width + 10, 2.5 * utils.formatPx(this.option.tooltip.fontSize) + 10);
-    this.ctx.fillStyle = '#00000088'
-    this.ctx.fill();
+    var default_font = this.option.tooltip.fontStyle + " " + this.option.tooltip.fontVariant + " " + this.option.tooltip.fontWeight + " " + this.option.tooltip.fontSize + (this.option.tooltip.lineHeight ? "/" + this.option.tooltip.lineHeight : '') + " " + this.option.tooltip.fontFamily
+    this.ctx.font = default_font
     this.ctx.fillStyle = this.option.tooltip.color;
     this.ctx.textAlign = "start";
-    this.ctx.fillText(param.data.name, param.x, param.y + utils.formatPx(this.option.tooltip.fontSize))
-    this.ctx.fillText(param.data.value + '(' + param.data.percent + ')', param.x, param.y + 2.2 * utils.formatPx(this.option.tooltip.fontSize))
+    this.ctx.textBaseline = "bottom";
+    // tip_back 需要知道 左上角（x,y）width （maxWidth 最长的一行宽度） 和 height(每一行的行高总和)
+    // 判定是含富文本的还是普通文本 (计算宽高的方式有所区别) 当有一个富文本的时候，则普通文本也会被包装成对象 所以可选像下面这样判断
+    var totalHeigth = 0;
+    var maxWidth = 0;
+    var rowWidth = 0;
+    var maxLineHeight = 0;
+    var rowLineHeight = []
+    if (typeof param.content[0] == "object") {
+        // 部分含有富文本的情况
+        // 分行 可以得到 本行我最大宽度 maxWidth 
+        param.content.forEach((rowObj, i) => {
+            rowWidth = 0;
+            // 一行中的每小段 可以 得到 这一行的最大行高 maxLineHeight 和每小段 的 文本宽度
+            for (const key in rowObj) {
+                var text = rowObj[key]
+
+                if (!this.option.tooltip.rich[key]) {
+                    this.option.tooltip.rich[key] = {}
+                }
+                let fontStyle = this.option.tooltip.rich[key].fontStyle ? this.option.tooltip.rich[key].fontStyle : this.option.tooltip.fontStyle
+                let fontVariant = this.option.tooltip.rich[key].fontVariant ? this.option.tooltip.rich[key].fontVariant : this.option.tooltip.fontVariant
+                let fontWeight = this.option.tooltip.rich[key].fontWeight ? this.option.tooltip.rich[key].fontWeight : this.option.tooltip.fontWeight
+                let fontSize = this.option.tooltip.rich[key].fontSize ? this.option.tooltip.rich[key].fontSize : this.option.tooltip.fontSize
+                let lineHeight = this.option.tooltip.rich[key].lineHeight ? this.option.tooltip.rich[key].lineHeight : this.option.tooltip.lineHeight
+                let fontFamily = this.option.tooltip.rich[key].fontFamily ? this.option.tooltip.rich[key].fontFamily : this.option.tooltip.fontFamily
+                this.ctx.font = fontStyle + " " + fontVariant + " " + fontWeight + " " + fontSize + (lineHeight ? "/" + lineHeight : '') + " " + fontFamily
+                this.ctx.fillStyle = this.option.tooltip.rich[key].color ? this.option.tooltip.rich[key].color : this.option.tooltip.color;
+                rowWidth += this.ctx.measureText(text).width
+
+                if (utils.formatPx(lineHeight,'option.tooltip.lineHeight') > maxLineHeight) {
+                    maxLineHeight = utils.formatPx(lineHeight,'option.tooltip.lineHeight')
+                }
+            }
+            rowLineHeight[i] = maxLineHeight
+            totalHeigth += maxLineHeight
+            if (rowWidth > maxWidth) {
+                maxWidth = rowWidth
+            }
+        })
+
+        // 画浮层
+        this.ctx.rect(param.x + 15, param.y+10, maxWidth + 10, totalHeigth);
+        this.ctx.fillStyle = this.option.tooltip.backgroundColor;
+        this.ctx.fill();
+        // 填写文字
+        totalHeigth = 0;
+        param.content.forEach((rowObj, i) => {
+            rowWidth = 0;
+            maxLineHeight = rowLineHeight[i]
+            totalHeigth += maxLineHeight
+            // 一行中的每小段 可以 得到 这一行的最大行高 maxLineHeight 和每小段 的 文本宽度
+            for (const key in rowObj) {
+                var text = rowObj[key]
+
+                if (!this.option.tooltip.rich[key]) {
+                    this.option.tooltip.rich[key] = {}
+                }
+                let fontStyle = this.option.tooltip.rich[key].fontStyle ? this.option.tooltip.rich[key].fontStyle : this.option.tooltip.fontStyle
+                let fontVariant = this.option.tooltip.rich[key].fontVariant ? this.option.tooltip.rich[key].fontVariant : this.option.tooltip.fontVariant
+                let fontWeight = this.option.tooltip.rich[key].fontWeight ? this.option.tooltip.rich[key].fontWeight : this.option.tooltip.fontWeight
+                let fontSize = this.option.tooltip.rich[key].fontSize ? this.option.tooltip.rich[key].fontSize : this.option.tooltip.fontSize
+                let lineHeight = this.option.tooltip.rich[key].lineHeight ? this.option.tooltip.rich[key].lineHeight : this.option.tooltip.lineHeight
+                let fontFamily = this.option.tooltip.rich[key].fontFamily ? this.option.tooltip.rich[key].fontFamily : this.option.tooltip.fontFamily
+                this.ctx.font = fontStyle + " " + fontVariant + " " + fontWeight + " " + fontSize + (lineHeight ? "/" + lineHeight : '') + " " + fontFamily
+                this.ctx.fillStyle = this.option.tooltip.rich[key].color ? this.option.tooltip.rich[key].color : this.option.tooltip.color;
+
+                this.ctx.fillText(text, param.x+20 + rowWidth, param.y+10 + totalHeigth)
+
+                rowWidth += this.ctx.measureText(text).width
+
+            }
+
+        })
+
+    } else {
+        // 普通文字
+        var default_lineHeight = this.option.tooltip.lineHeight
+        param.content.forEach((text, i) => {
+            totalHeigth += utils.formatPx(default_lineHeight,'option.tooltip.lineHeight or option.tooltip.rich[].lineHeight')
+            rowWidth = this.ctx.measureText(text).width
+            if (rowWidth > maxWidth) {
+                maxWidth = rowWidth
+            }
+        })
+        this.ctx.rect(param.x - 5, param.y, maxWidth + 10, totalHeigth);
+        this.ctx.fillStyle = '#00000088'
+        this.ctx.fill();
+        // 画完底部浮层 填上文字
+        this.ctx.fillStyle = this.option.tooltip.color;
+        totalHeigth = 0;
+        param.content.forEach((text, i) => {
+            totalHeigth += utils.formatPx(default_lineHeight,'option.tooltip.lineHeight  or option.tooltip.rich[].lineHeight')
+            this.ctx.fillText(text, param.x, param.y + totalHeigth)
+        })
+    }
+
     this.ctx.restore();
 }
-DonutChart.prototype.drawLabel = function (param) {
-    if(!this.option.label.show){
+DonutChart.prototype.drawLabel = function (content) {
+
+    if (!this.option.label.show) {
         return false;
     }
-    // 添加字体
     this.ctx.save()
     this.ctx.rotate(utils.angelToRadian(90 + this.option.startAngle))
     this.ctx.beginPath();
-    this.ctx.fillStyle = this.label.firstTextStyle.color;
-    this.ctx.font = this.label.firstTextStyle.fontSize + ' ' + this.label.firstTextStyle.fontFamily;
+    var default_font = this.option.label.fontStyle + " " + this.option.label.fontVariant + " " + this.option.label.fontWeight + " " + this.option.label.fontSize + (this.option.label.lineHeight ? "/" + this.option.label.lineHeight : '') + " " + this.option.label.fontFamily
+    this.ctx.font = default_font
+    this.ctx.fillStyle = this.option.label.color;
     this.ctx.textAlign = "center";
-    this.ctx.fillText(param.name, 0, -2 * utils.formatPx(this.label.firstTextStyle.fontSize, 'label.firstTextStyle.fontSize') / 3);
+    this.ctx.textBaseline = "bottom";
+    // tip_back 需要知道 左上角（x,y）width （maxWidth 最长的一行宽度） 和 height(每一行的行高总和)
+    // 判定是含富文本的还是普通文本 (计算宽高的方式有所区别) 当有一个富文本的时候，则普通文本也会被包装成对象 所以可选像下面这样判断
+    var totalHeigth = 0;
+    var rowWidth = 0;
+    var maxWidth = 0;
+    var maxLineHeight = 0;
+    var rowLineHeight = []
+    var rowWidths = [];
+    if (typeof content[0] == "object") {
+        // 部分含有富文本的情况
+        // 分行 可以得到 本行最大宽度 maxWidth 
+        content.forEach((rowObj, i) => {
+            rowWidth = 0;
+            // 一行中的每小段 可以 得到 这一行的最大行高 maxLineHeight 和每小段 的 文本宽度
+            for (const key in rowObj) {
+                var text = rowObj[key]
 
-    this.ctx.beginPath();
-    this.ctx.fillStyle = this.label.secondTextStyle.color;
-    this.ctx.font = this.label.secondTextStyle.fontSize + ' ' + this.label.secondTextStyle.fontFamily;
-    this.ctx.fillText(param.value, 0, 2 * utils.formatPx(this.label.secondTextStyle.fontSize, 'label.secondTextStyle.fontSize') / 3);
+                if (!this.option.label.rich[key]) {
+                    this.option.label.rich[key] = {}
+                }
+                let fontStyle = this.option.label.rich[key].fontStyle ? this.option.label.rich[key].fontStyle : this.option.label.fontStyle
+                let fontVariant = this.option.label.rich[key].fontVariant ? this.option.label.rich[key].fontVariant : this.option.label.fontVariant
+                let fontWeight = this.option.label.rich[key].fontWeight ? this.option.label.rich[key].fontWeight : this.option.label.fontWeight
+                let fontSize = this.option.label.rich[key].fontSize ? this.option.label.rich[key].fontSize : this.option.label.fontSize
+                let lineHeight = this.option.label.rich[key].lineHeight ? this.option.label.rich[key].lineHeight : this.option.label.lineHeight
+                let fontFamily = this.option.label.rich[key].fontFamily ? this.option.label.rich[key].fontFamily : this.option.label.fontFamily
+                this.ctx.font = fontStyle + " " + fontVariant + " " + fontWeight + " " + fontSize + (lineHeight ? "/" + lineHeight : '') + " " + fontFamily
+                this.ctx.fillStyle = this.option.label.rich[key].color ? this.option.label.rich[key].color : this.option.label.color;
+                rowWidth += this.ctx.measureText(text).width
+
+                if (utils.formatPx(lineHeight,'option.label.lineHeight or option.label.rich[].lineHeight') > maxLineHeight) {
+                    maxLineHeight = utils.formatPx(lineHeight,'option.label.lineHeight or option.label.rich[].lineHeight')
+                }
+            }
+            rowLineHeight[i] = maxLineHeight
+            rowWidths[i] = rowWidth
+            if (rowWidth > maxWidth) {
+                maxWidth = rowWidth
+            }
+
+        })
+
+        // 填写文字
+        this.ctx.translate(0, -eval(rowLineHeight.join("+")) / 2)
+        totalHeigth = 0;
+        content.forEach((rowObj, i) => {
+
+            this.ctx.save()
+            this.ctx.translate(-rowWidths[i] / 2, 0)
+            this.ctx.textAlign = "start";
+            rowWidth = 0;
+            maxLineHeight = rowLineHeight[i]
+            totalHeigth += maxLineHeight
+            // 一行中的每小段 可以 得到 这一行的最大行高 maxLineHeight 和每小段 的 文本宽度
+            for (const key in rowObj) {
+                var text = rowObj[key]
+
+                if (!this.option.label.rich[key]) {
+                    this.option.label.rich[key] = {}
+                }
+                let fontStyle = this.option.label.rich[key].fontStyle ? this.option.label.rich[key].fontStyle : this.option.label.fontStyle
+                let fontVariant = this.option.label.rich[key].fontVariant ? this.option.label.rich[key].fontVariant : this.option.label.fontVariant
+                let fontWeight = this.option.label.rich[key].fontWeight ? this.option.label.rich[key].fontWeight : this.option.label.fontWeight
+                let fontSize = this.option.label.rich[key].fontSize ? this.option.label.rich[key].fontSize : this.option.label.fontSize
+                let lineHeight = this.option.label.rich[key].lineHeight ? this.option.label.rich[key].lineHeight : this.option.label.lineHeight
+                let fontFamily = this.option.label.rich[key].fontFamily ? this.option.label.rich[key].fontFamily : this.option.label.fontFamily
+                this.ctx.font = fontStyle + " " + fontVariant + " " + fontWeight + " " + fontSize + (lineHeight ? "/" + lineHeight : '') + " " + fontFamily
+                this.ctx.fillStyle = this.option.label.rich[key].color ? this.option.label.rich[key].color : this.option.label.color;
+
+
+                this.ctx.fillText(text, rowWidth, totalHeigth)
+                rowWidth += this.ctx.measureText(text).width
+            }
+
+
+
+            this.ctx.restore()
+        })
+
+    } else {
+        // 普通文字
+        var default_lineHeight = this.option.label.lineHeight
+        content.forEach((text, i) => {
+            totalHeigth += utils.formatPx(default_lineHeight,'option.label.lineHeight')
+            rowWidth = this.ctx.measureText(text).width
+            if (rowWidth > maxWidth) {
+                maxWidth = rowWidth
+            }
+        })
+        // 半总高 
+        var halfHeight = totalHeigth / 2
+        // 起始y
+        var startY = halfHeight - utils.formatPx(default_lineHeight,'option.label.lineHeight')
+
+        this.ctx.fillStyle = this.option.label.color;
+        totalHeigth = 0;
+        content.forEach((text, i) => {
+            this.ctx.fillText(text, 0, -startY + totalHeigth)
+            totalHeigth += utils.formatPx(default_lineHeight,'option.label.lineHeight')
+        })
+    }
+
     this.ctx.restore();
 }
 DonutChart.prototype.init = function (callback, titleFlag) {
@@ -179,81 +390,122 @@ DonutChart.prototype.init = function (callback, titleFlag) {
     this.ctx.rotate(utils.angelToRadian(-90 + this.option.startAngle))
     this.ctx.lineWidth = this.lineWidth
     this.ctx.lineCap = this.option.capType
-    var _this = this
-    this.arcArray = []
-    var total = 0
-    this.data.forEach(function (item, index) {
-        total += item.value
+    var _this = this,
+     _arcArray = [],
+     _total = 0,
+     _lastAngel = 0;
+
+    this.data.forEach((item, index)=> {
+        _total += item.value
+        item.color = item.color || this.color[index]
     })
-    if(total==0){
+    if (_total == 0) {
         this.drawArc(0, 360, this.option.backgroundArc)
         return false;
     }
-    var lastAngel = 0
-    this.data.forEach(function (item, index) {
-        var arr = (item.value / total).toFixed(4).toString().slice(2).split('')
-        arr.splice(2, 0, '.')
-        var num = arr.join('')
-
-        _this.arcArray[index] = {
-            index: index,
+    if (this.option.type == "gauge") {
+        if(this.option.data[0].value>100){
+            throw 'this.option.data 里的 value 值不能大于100'
+            return false;
+        }
+        _total = this.option.max
+        this.drawArc(0, 360, this.option.backgroundArc)
+    }
+    
+    
+    this.data.sort(function(obj1,obj2){
+        var val1 = obj1.value
+        var val2 = obj2.value
+        if(val1 > val2){
+            return 1
+        }else if(val1<val2){
+            return -1
+        }else{
+            return 0 
+        }
+    })
+    
+    this.data.forEach((item, index) =>{
+        var _arr,_num;
+        if(item.value / _total == 1){
+            _num = '100'
+        }else{
+            _arr = (item.value / _total).toFixed(4).toString().slice(2).split('') 
+            _arr.splice(2, 0, '.')
+            _num = _arr.join('')
+        }
+        
+        _arcArray[index] = {
+            index:index,
             name: item.name,
             value: item.value,
-            startAngle: lastAngel,
-            endAngle: item.value / total * 360 + lastAngel,
-            percent: num + '%'
+            startAngle: _lastAngel,
+            endAngle: item.value / _total * 360 + _lastAngel,
+            percent: _num + '%',
+            color:item.color
         }
-        lastAngel = _this.arcArray[index].endAngle
+        _lastAngel = _arcArray[index].endAngle
     })
-    this.data.forEach(function (item, index) {
-        _this.drawArc(_this.arcArray[index].startAngle, _this.arcArray[index].endAngle, _this.color[index])
+
+    _arcArray.forEach( (item, index) =>{                
+        this.drawArc(item.startAngle, item.endAngle, item.color)        
     })
-    for (var i = 0, l = this.data.length; i < l; i++) {
-        if (this.data[i].value != 0) {
-            this.drawArc(0, 0.05, this.color[i])
-            break;
+    
+    for (var i = 0, l = _arcArray.length; i < l; i++) {
+        if (_arcArray[i].value != 0) {
+            this.drawArc(_arcArray[i].startAngle,_arcArray[i].startAngle+ 0.1, _arcArray[i].color)
         }
     }
 
     // 绑定事件
     this.canvas.onmousemove = function (e) {
-
-        var rate = _this.canvas[this.width > this.height ? "offsetHeight" : "offsetWidth"] / this[this.width > this.height ? "height" : "width"]
         
         var x = e.offsetX - this.offsetWidth / 2
         var y = e.offsetY - this.offsetHeight / 2
         var x2 = x * x
         var y2 = y * y
         // 选中圆环
-        if (Math.sqrt(x2 + y2) > (_this.radius - _this.lineWidth) * rate && Math.sqrt(x2 + y2) < (_this.radius + _this.lineWidth) * rate) {
+        if (Math.sqrt(x2 + y2) > (_this.radius - _this.lineWidth) * _this.rate && Math.sqrt(x2 + y2) < (_this.radius + _this.lineWidth) * _this.rate) {
             var angle = Math.atan2(x, -y) / (Math.PI / 180) > 0 ? Math.atan2(x, -y) / (Math.PI / 180) : 360 + Math.atan2(x, -y) / (Math.PI / 180)
             // 选中某段，显示某段
 
-            for (var i = 0, l = _this.arcArray.length; i < l; i++) {
-                if (angle < _this.arcArray[i].endAngle) {
+            for (var i = 0, l = _arcArray.length; i < l; i++) {
+                if (angle < _arcArray[i].endAngle) {
                     _this.init(callback, _this.option.labelCoverTitle)
-                    _this.drawArc(_this.arcArray[i].startAngle, _this.arcArray[i].endAngle, _this.option.selectedStyle.color, _this.option.selectedStyle.borderWidth + _this.lineWidth)
-                    _this.drawArc(_this.arcArray[i].startAngle, _this.arcArray[i].endAngle, _this.color[i], _this.lineWidth)
+                    
+                    _this.drawArc(_arcArray[i].startAngle, _arcArray[i].endAngle, _this.option.selectedStyle.color, _this.option.selectedStyle.borderWidth + _this.lineWidth)
+                    _this.drawArc(_arcArray[i].startAngle, _arcArray[i].endAngle, _arcArray[i].color, _this.lineWidth)
 
                     // show label
-                    _this.drawLabel(_this.arcArray[i])
+                    var content = []
+                    if (typeof _this.option.label.formatter == "function") {
+                        content = utils.formatterToObject(_this.option.label.formatter(_arcArray[i]))
+                    } else {
+                        content = [_arcArray[i].name, _arcArray[i].value]
+                    }
+                    _this.drawLabel(content)
+                    content = []
+                    if (typeof _this.option.tooltip.formatter == "function") {
+                        content = utils.formatterToObject(_this.option.tooltip.formatter(_arcArray[i]))
+                    } else {
+                        content = [_arcArray[i].name, _arcArray[i].value]
+                    }
                     // show tip
                     _this.drawTip({
-                        x: x/rate,
-                        y: y/rate,
-                        data: _this.arcArray[i]
+                        x: x / _this.rate,
+                        y: y / _this.rate,
+                        content: content
                     })
-                    
-                    callback(_this.arcArray[i])
+
+                    callback(_arcArray[i])
                     break;
+                } else {
+                    _this.init(callback)
                 }
             }
-
 
         } else {
             _this.init(callback)
         }
-
     }
-
 }

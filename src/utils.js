@@ -17,8 +17,55 @@ module.exports = {
         }
         throw name + " 参数格式错误"
     },
+    // 富文本格式"{a|水电费}"=》 object {a:水电费}
+    formatterToObject(param) {
+
+        if (param === undefined) {
+            return false;
+        }
+        if (typeof param != "string") {
+            throw "formatter 必须返回一个字符串"
+        }
+        try {
+            var rowTexts = param.split('\n')
+            var textObjs = []
+            // 富文本格式
+            
+            if ((/\{(\w+)\|([\s\S]*?)\}/g.test(param))) {
+                rowTexts.forEach((element,index) => {
+
+                    var str = ''
+                    var arr = element.replace(/\{(\w+)\|([\s\S]*?)\}/g, ',"$1":"$2",').split(',')
+                    
+                    arr.forEach((e,i)=>{
+                        if(e.indexOf(':')>-1){
+                            str += e+','
+                        }else{
+                            str +='"default_'+i+'":"' + e + '",'
+                        }
+                    })
+                    
+                    // 得到要渲染的对象
+                    textObjs.push(JSON.parse("{" + str.slice(0, -1) + "}"))
+                    
+                });
+                // 普通格式
+            } else {
+                rowTexts.forEach(element => {
+                    textObjs.push(element)
+                });
+            }
+            return textObjs
+        } catch (error) {
+            throw "formatter 的格式不正确"
+        }
+    },
+
     // 角度转弧度
-    angelToRadian(param) {
+    angelToRadian(param,name) {
+        if(isNaN(param)){
+            throw name+'不是一个有效数字'
+        }        
         return param * Math.PI / 180
     },
     extend() {
@@ -64,7 +111,7 @@ module.exports = {
 
                     // Recurse if we're merging plain objects or arrays
                     if (deep && copy && (this.isPlainObject(copy) ||
-                            (copyIsArray = this.isArray(copy)))) {
+                        (copyIsArray = this.isArray(copy)))) {
 
                         if (copyIsArray) {
                             copyIsArray = false;
@@ -90,19 +137,19 @@ module.exports = {
     },
     isFunction(param) {
         return typeof param == 'function'
-    }, 
+    },
     isPlainObject(obj) {
         var key;
-    
+
         // Must be an Object.
         // Because of IE, we also have to check the presence of the constructor property.
         // Make sure that DOM nodes and window objects don't pass through, as well
         if (!obj || this.type(obj) !== "object" || obj.nodeType || this.isWindow(obj)) {
             return false;
         }
-    
+
         try {
-    
+
             // Not own constructor property must be Object
             if (obj.constructor &&
                 !hasOwn.call(obj, "constructor") &&
@@ -110,11 +157,11 @@ module.exports = {
                 return false;
             }
         } catch (e) {
-    
+
             // IE8,9 Will throw exceptions on certain host objects #9897
             return false;
         }
-    
+
         // Support: IE<9
         // Handle iteration over inherited properties before own properties.
         if (!support.ownFirst) {
@@ -122,11 +169,11 @@ module.exports = {
                 return hasOwn.call(obj, key);
             }
         }
-    
+
         // Own properties are enumerated firstly, so to speed up,
         // if last one is own, then all properties are own.
-        for (key in obj) {}
-    
+        for (key in obj) { }
+
         return key === undefined || hasOwn.call(obj, key);
     },
     type(obj) {

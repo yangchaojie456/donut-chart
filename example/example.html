@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>example</title>
+    <style>
+        div {
+            display: inline-block;
+            width: 750px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <p>环形图1</p>
+        <canvas id="pie_1" width="750" height="600"></canvas>
+    </div>
+    <div>
+        <p>环形图2</p>
+        <canvas id="pie_2" width="750" height="600"></canvas>
+    </div>
+    <div>
+        <p>计量图1</p>
+        <canvas id="gauge_1" width="750" height="600"></canvas>
+    </div>
+    <div>
+        <p>计量图2</p>
+        <canvas id="gauge_2" width="750" height="600"></canvas>
+    </div>
+    <script src="../dist/donut-chart.min.js"></script>
+    <script>
+        var option = {
+            type: 'pie', // pie 环形图|| gauge 计量图
+            title: {
+                show: true,
+                text: '总资产(元)',
+                textStyle: {
+                    fontSize: "20px",
+                    lineHeight: "30px",
+                    color: '#9f9f9f'
+                },
+                subtext: '360',
+                subtextStyle: {
+                    fontSize: "30px",
+                    lineHeight: "35px",
+                    color: '#e53344'
+                },
+                x: '10%',
+                y: "10%",
+            },
+            tooltip: {
+                show: true,
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'normal',
+                fontSize: "20px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: 'white',
+                backgroundColor: '#00000099',
+                formatter: function (param) {
+                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                        "元}"
+                    return str
+                },
+                rich: {
+                    a: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+                        color: 'white',
+                    },
+                    c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'normal',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+                        color: 'white',
+                    },
+                    b: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "30px",
+                        lineHeight: "35px",
+                        fontFamily: 'Arial',
+                        color: '#e53344',
+                    }
+                }
+            },
+            x: "50%",
+            y: "50%",
+            radius: "30%",
+            lineWidth: "5%",
+            data: [{
+                name: "账户余额(元)",
+                value: 110,
+            }, {
+                name: "散标待回(元)",
+                value: 120,
+            }, {
+                name: "在途资金(元)",
+                value: 130,
+            }],
+            label: {
+                show: true,
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'bold',
+                fontSize: "20px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: '#9f9f9f',
+                formatter: function (param) {
+                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                        "元}"
+                    return str
+                },
+                rich: {
+                    a: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+
+                    },
+                    b: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "30px",
+                        lineHeight: "35px",
+                        fontFamily: 'Arial',
+                        color: '#e53344',
+                    },
+                    c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+
+                    }
+                }
+            },
+            capType: "round",
+            selectedStyle: {
+                color: "white",
+                borderWidth: 10
+            },
+            color: ["#fe7c00", "#e83227", "#32a676"],
+            labelCoverTitle: false,
+            backgroundArc: '#999'
+        }
+        var cir1 = new DonutChart('pie_1', option)
+
+        cir1.init(function (result) {
+            console.log(result)
+        })
+
+        var option2 = {
+            type: 'pie', // pie 环形图|| gauge 计量图
+            title: {
+                show: true,
+                text: '总资产(元)',
+                textStyle: {
+                    fontSize: "20px",
+                    lineHeight: "30px",
+                    color: '#9f9f9f'
+                },
+                subtext: '360',
+                subtextStyle: {
+                    fontSize: "30px",
+                    lineHeight: "35px",
+                    color: '#e53344'
+                },
+                x: '50%',
+                y: "50%",
+            },
+            tooltip: {
+                show: true,
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'normal',
+                fontSize: "20px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: 'white',
+                backgroundColor: '#00000099',
+                formatter: function (param) {
+                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                        "元}"
+                    return str
+                },
+                rich: {
+                    a: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+                        color: 'white',
+                    },
+                    c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'normal',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+                        color: 'white',
+                    },
+                    b: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "30px",
+                        lineHeight: "35px",
+                        fontFamily: 'Arial',
+                        color: '#e53344',
+                    }
+                }
+            },
+            x: "50%",
+            y: "50%",
+            radius: "30%",
+            lineWidth: "5%",
+            data: [{
+                name: "账户余额(元)",
+                value: 110,
+            }, {
+                name: "散标待回(元)",
+                value: 120,
+            }, {
+                name: "在途资金(元)",
+                value: 130,
+            }],
+            label: {
+                show: true,
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'bold',
+                fontSize: "20px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: '#9f9f9f',
+                formatter: function (param) {
+                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                        "元}"
+                    return str
+                },
+                rich: {
+                    a: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+
+                    },
+                    b: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "30px",
+                        lineHeight: "35px",
+                        fontFamily: 'Arial',
+                        color: '#e53344',
+                    },
+                    c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+
+                    }
+                }
+            },
+            capType: "round",
+            selectedStyle: {
+                color: "white",
+                borderWidth: 10
+            },
+            color: ["#fe7c00", "#e83227", "#32a676"],
+            labelCoverTitle: true,
+            backgroundArc: '#999'
+        }
+        var cir2 = new DonutChart('pie_2', option2)
+
+        cir2.init(function (result) {
+            console.log(result)
+        })
+
+        var option3 = {
+            type: 'gauge', // pie 环形图|| gauge 计量图
+            title: {
+                show: true,
+                text: '考试时长（分钟）',
+                textStyle: {
+                    fontSize: "20px",
+                    lineHeight: "30px",
+                    color: '#9f9f9f'
+                },
+                subtext: '120',
+                subtextStyle: {
+                    fontSize: "30px",
+                    lineHeight: "35px",
+                    color: '#e53344'
+                },
+                x: '20%',
+                y: "10%",
+            },
+            tooltip: {
+                show: true,
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'normal',
+                fontSize: "20px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: 'white',
+                backgroundColor: '#00000099',
+                formatter: function (param) {
+                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                        "分钟}"
+                    return str
+                },
+                rich: {
+                    a: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+                        color: 'white',
+                    },
+                    c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'normal',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+                        color: 'white',
+                    },
+                    b: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "30px",
+                        lineHeight: "35px",
+                        fontFamily: 'Arial',
+                        color: '#e53344',
+                    }
+                }
+            },
+            x: "50%",
+            y: "50%",
+            radius: "30%",
+            lineWidth: "5%",
+            max: 120, // 映射总值
+            data: [{
+                name: "已用时长（分钟）",
+                value: 85, // 映射计量值
+            }],
+            label: {
+                show: true,
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'bold',
+                fontSize: "20px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: '#9f9f9f',
+                formatter: function (param) {
+                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                        "分钟}"
+                    return str
+                },
+                rich: {
+                    a: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+
+                    },
+                    b: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "30px",
+                        lineHeight: "35px",
+                        fontFamily: 'Arial',
+                        color: '#e53344',
+                    },
+                    c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+
+                    }
+                }
+            },
+            capType: "round",
+            selectedStyle: {
+                color: "white",
+                borderWidth: 10
+            },
+            color: ["#fe7c00", "#e83227", "#32a676"],
+            labelCoverTitle: false,
+            backgroundArc: '#999'
+        }
+        var cir3 = new DonutChart('gauge_1', option3)
+
+        cir3.init(function (result) {
+            console.log(result)
+        })
+        var option4 = {
+            type: 'gauge', // pie 环形图|| gauge 计量图
+            title: {
+                show: true,
+                text: '考试时长（分钟）',
+                textStyle: {
+                    fontSize: "20px",
+                    lineHeight: "30px",
+                    color: '#9f9f9f'
+                },
+                subtext: '120',
+                subtextStyle: {
+                    fontSize: "30px",
+                    lineHeight: "35px",
+                    color: '#e53344'
+                },
+                x: '50%',
+                y: "50%",
+            },
+            tooltip: {
+                show: true,
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'normal',
+                fontSize: "20px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: 'white',
+                backgroundColor: '#00000099',
+                formatter: function (param) {
+                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                        "分钟}"
+                    return str
+                },
+                rich: {
+                    a: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+                        color: 'white',
+                    },
+                    c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'normal',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+                        color: 'white',
+                    },
+                    b: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "30px",
+                        lineHeight: "35px",
+                        fontFamily: 'Arial',
+                        color: '#e53344',
+                    }
+                }
+            },
+            x: "50%",
+            y: "50%",
+            radius: "30%",
+            lineWidth: "5%",
+            max: 120, // 映射总值
+            data: [{
+                name: "已用时长（分钟）",
+                value: 85, // 映射计量值
+            }],
+            label: {
+                show: true,
+                fontStyle: "normal",
+                fontVariant: "normal",
+                fontWeight: 'bold',
+                fontSize: "20px",
+                lineHeight: "30px",
+                fontFamily: 'Arial',
+                color: '#9f9f9f',
+                formatter: function (param) {
+                    var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                        "分钟}"
+                    return str
+                },
+                rich: {
+                    a: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+
+                    },
+                    b: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "30px",
+                        lineHeight: "35px",
+                        fontFamily: 'Arial',
+                        color: '#e53344',
+                    },
+                    c: {
+                        fontStyle: "normal",
+                        fontVariant: "normal",
+                        fontWeight: 'bold',
+                        fontSize: "20px",
+                        lineHeight: "30px",
+                        fontFamily: 'Arial',
+
+                    }
+                }
+            },
+            capType: "round",
+            selectedStyle: {
+                color: "white",
+                borderWidth: 10
+            },
+            color: ["#fe7c00", "#e83227", "#32a676"],
+            labelCoverTitle: true,
+            backgroundArc: '#999'
+        }
+        var cir4 = new DonutChart('gauge_2', option4)
+
+        cir4.init(function (result) {
+            console.log(result)
+        })
+    </script>
+</body>
+
+</html>
