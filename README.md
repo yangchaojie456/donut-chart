@@ -2,7 +2,8 @@
 
 > 市场上虽然有各种基于canvas的图表工具，比如echarts.js ,chart.js。他们功能都很强大，性能也非常优秀。但是饼形图或环形图中并没有以圆角为交界的图表。
 
-![demo](./example/images/image.png)
+![demo](./example/images/image1.png)
+![demo](./example/images/image2.png)
 
 > **本插件使用canvas可以帮助你快速创建一个以圆角交界的环形图**
 ## 兼容性
@@ -117,7 +118,7 @@
         //     name: "在途资金(元)",
         //     value: 130,
         // }],
-        
+
         // {{/if}}
         label: {
             show: true,
