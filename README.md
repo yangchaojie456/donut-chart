@@ -29,7 +29,7 @@
 ## 参数
 >> option 示例 (默认值)
 ```javascript
-    var option2 = {
+    var option = {
         type: 'pie', // pie 环形图|| gauge 计量图
         title: {
             show: true,
@@ -97,16 +97,28 @@
         y: "50%",
         radius: "30%",  // 半径
         lineWidth: "5%", // 圆环宽度
-        data: [{
-            name: "账户余额(元)",
-            value: 110,
-        }, {
-            name: "散标待回(元)",
-            value: 120,
-        }, {
-            name: "在途资金(元)",
-            value: 130,
-        }],
+        // {{if type === gauge 计量图}}
+
+        // max: 120, // 映射总值
+        // data: [{
+        //     name: "已用时长（分钟）",
+        //     value: 85, // 映射计量值
+        // }],
+
+        // {{else if type === pie 环形图}}
+
+        // data: [{
+        //     name: "账户余额(元)",
+        //     value: 110,
+        // }, {
+        //     name: "散标待回(元)",
+        //     value: 120,
+        // }, {
+        //     name: "在途资金(元)",
+        //     value: 130,
+        // }],
+        
+        // {{/if}}
         label: {
             show: true,
             fontStyle: "normal",
