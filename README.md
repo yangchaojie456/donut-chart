@@ -1,6 +1,6 @@
 ## 声明
 
-> 市场上虽然有各种基于canvas的图表工具，比如echarts.js ,chart.js。他们功能都很强大，性能也比较优秀。但是饼形图或环形图中并没有以圆角为交界的图表。
+> 市场上虽然有各种基于canvas的图表工具，比如echarts.js ,chart.js。他们功能都很强大，性能也非常优秀。但是饼形图或环形图中并没有以圆角为交界的图表。
 
 ![demo](./example/images/image.png)
 
@@ -29,61 +29,135 @@
 ## 参数
 >> option 示例 (默认值)
 ```javascript
-    var option = {
+    var option2 = {
+        type: 'pie', // pie 环形图|| gauge 计量图
         title: {
-            show:true, // 标题是否显示，默认为true
-            text: {           // 主标题
-                value: '',// 必填
-                color: '#999',
-                fontSize: '30px',
-                fontFamily: 'Arial'
-            },
-            secondText: {   // 副标题(可选)
-                value: '', //(有副标题)必填
-                color: '#666',
-                fontSize: '30px',
-                fontFamily: 'Arial'
-            },
-            x: '50%',   // 标题位置
-            y: "50%",   
-        },
-        tooltip: {      // 提示框
-            show: true, 
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            color: 'white'
-        },
-        x: "50%",   // 环形图位置
-        y: "50%",
-        radius: "30%", // 环形图半径
-        lineWidth: "5%", // 环形图宽度
-        startAngle: 0, // 起始角度
-        data: [{
-            name: "", // 环形图一块的名字
-            value: ,// 环形图一块的值
-        },{
-            name: "", // 
-            value: ,
-        }],
-        label: {  // 标签 样式
             show: true,
-            firstTextStyle: {
-                fontSize: '30px',
-                fontFamily: 'Arial',
-                color: "#999"
+            text: '总资产(元)',
+            textStyle: {
+                fontSize: "20px",
+                lineHeight: "30px",
+                color: '#9f9f9f'
             },
-            secondTextStyle: {
-                fontSize: '30px',
-                fontFamily: 'Arial',
-                color: "#666"
+            subtext: '360',
+            subtextStyle: {
+                fontSize: "30px",
+                lineHeight: "35px",
+                color: '#e53344'
+            },
+            x: '50%', // title 位置
+            y: "50%",
+        },
+        tooltip: {
+            show: true,
+            fontStyle: "normal",    // 	规定字体样式 normal || italic || oblique
+            fontVariant: "normal",  // 规定字体变体 normal || small-caps
+            fontWeight: 'normal',   // 规定字体的粗细 normal || bold || bolder || lighter || 100 || 200 || 300 || 400 || 500 || 600 || 700 || 800 || 900
+            fontSize: "20px",   // 规定字号，以像素计
+            lineHeight: "30px", // 规定行高，以像素计
+            fontFamily: 'Arial',// 规定字体系列
+            color: 'white',     // 字体颜色
+            backgroundColor: '#00000099', // tip 背景
+            formatter: function (param) {   // 类似echarts 富文本编辑
+                var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                    "元}"
+                return str
+            },
+            rich: {
+                a: {
+                    fontStyle: "normal",
+                    fontVariant: "normal",
+                    fontWeight: 'bold',
+                    fontSize: "20px",
+                    lineHeight: "30px",
+                    fontFamily: 'Arial',
+                    color: 'white',
+                },
+                c: {
+                    fontStyle: "normal",
+                    fontVariant: "normal",
+                    fontWeight: 'normal',
+                    fontSize: "20px",
+                    lineHeight: "30px",
+                    fontFamily: 'Arial',
+                    color: 'white',
+                },
+                b: {
+                    fontStyle: "normal",
+                    fontVariant: "normal",
+                    fontWeight: 'bold',
+                    fontSize: "30px",
+                    lineHeight: "35px",
+                    fontFamily: 'Arial',
+                    color: '#e53344',
+                }
             }
         },
-        capType: "round", // 圆角交界 |  butt 平角
-        selectedStyle: {    // 选中环形图一块时的样式
-            color: "white",
-            borderWidth: 10
+        x: "50%",   // 图标位置
+        y: "50%",
+        radius: "30%",  // 半径
+        lineWidth: "5%", // 圆环宽度
+        data: [{
+            name: "账户余额(元)",
+            value: 110,
+        }, {
+            name: "散标待回(元)",
+            value: 120,
+        }, {
+            name: "在途资金(元)",
+            value: 130,
+        }],
+        label: {
+            show: true,
+            fontStyle: "normal",
+            fontVariant: "normal",
+            fontWeight: 'bold',
+            fontSize: "20px",
+            lineHeight: "30px",
+            fontFamily: 'Arial',
+            color: '#9f9f9f',
+            formatter: function (param) {
+                var str = "{a|" + param.name + "}" + "{c|" + param.percent + "}" + '\n' + "{b|" + param.value +
+                    "元}"
+                return str
+            },
+            rich: {
+                a: {
+                    fontStyle: "normal",
+                    fontVariant: "normal",
+                    fontWeight: 'bold',
+                    fontSize: "20px",
+                    lineHeight: "30px",
+                    fontFamily: 'Arial',
+
+                },
+                b: {
+                    fontStyle: "normal",
+                    fontVariant: "normal",
+                    fontWeight: 'bold',
+                    fontSize: "30px",
+                    lineHeight: "35px",
+                    fontFamily: 'Arial',
+                    color: '#e53344',
+                },
+                c: {
+                    fontStyle: "normal",
+                    fontVariant: "normal",
+                    fontWeight: 'bold',
+                    fontSize: "20px",
+                    lineHeight: "30px",
+                    fontFamily: 'Arial',
+
+                }
+            }
         },
-        color:["#FF7F00","#FFFF00 ","#00FF00 ","#00FFFF ","#0000FF","#8B00FF","#FF0000 "], // 环形图每块分配的颜色
-        labelCoverTitle: true // 标签是否覆盖标题
+        capType: "round", // 圆角 || butt 平角
+        selectedStyle: {  // 选中时的样式
+            color: "white", // 包边颜色
+            borderWidth: 10 // 包边宽度
+        },
+        color: ["#fe7c00", "#e83227", "#32a676"],
+        labelCoverTitle: true, // label 是否覆盖标题
+        backgroundArc: '#999' // 空圆环的颜色
     }
 ```
